@@ -1,8 +1,11 @@
 let score = 0;
+const attacks=[];
 
 const playerNameInput=document.getElementById("playerName");
 const attackValueInput=document.getElementById("attackValue");
 const message= document.getElementById("message");
+const historyList = document.getElementById("history");
+
 
 const scoreDisplay = document.getElementById("score");
 const title = document.getElementById("title");
@@ -11,8 +14,9 @@ const powerButton=document.getElementById("powerButton")
 const resetButton = document.getElementById("resetButton");
 // TODO: create addPoint()
 function performAttack() {
- const playerName = playerNameInput.value.trim();
+  const playerName = playerNameInput.value.trim();
  const attackValue = getAttackValue();
+
   if (playerName===""){
     message.innerText="Please enter your name";
     return;
@@ -24,19 +28,44 @@ function performAttack() {
   const damage=calculateDamage(attackValue,isCritical);
 
   score +=damage;
+  attacks.push(damage);
   message.innerText=`${playerName} caused ${damage} damage`;
 updateDisplay();
+}
+
+function updateHistory(){
+  historyList.innterHTML="";
+
+  for (let index=0; index<attacks.length; index++){
+    const listItem= document.createElement("li");
+    listItem.innerText=`Attack${index + 1}:${attacks[index]}damage`;
+    historyList.appendChild(listItem);
+    const totalAttacks=attacks.length;
+  }
 }
 
 // TODO: create resetGame()
 function resetGame() {
   score = 0;
+  attacks.length=0;
+  playerNameInput.value="";
+  attackValueInput.value="1";
   title.innerText = "Click Attack";
-  updateDisplay();
+ message.innetText="Enter your name and chosen attack value";
+ updateDisplay();
 }
 //Update display
 function updateDisplay() {
   scoreDisplay.innerText = score;
+  updateHistory();
+
+  if (score>=20) {
+    title.innerText = "You Win!";
+    attackButton.disabled = true;
+  }else{
+    title.innerText="Click Attack!";
+    attackButton.disabled=false;
+  }
 }
 function powerPoint(){
   score+=5;
@@ -64,6 +93,7 @@ function getAttackValue(){
 }
 function updateDisplay() {
   scoreDisplay.innerText = score;
+  updateHistory();
   if (score >= 20) {
     title.innerText = "YOU WIN!";
   }
